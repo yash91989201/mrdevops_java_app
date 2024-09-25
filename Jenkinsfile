@@ -2,7 +2,12 @@
 
 pipeline{
 
-    agent any
+    agent{
+      docker{
+        image 'abhishekf5/maven-abhishek-docker-agent:v1'
+        args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+      }
+    } 
 
     parameters{
 
@@ -15,8 +20,8 @@ pipeline{
     stages{
          
         stage('Git Checkout'){
-                    when { expression {  params.action == 'create' } }
-            steps{
+            when { expression {  params.action == 'create' } }
+            steps {
             gitCheckout(
                 branch: "main",
                 url: "https://github.com/yash91989201/mrdevops_java_app.git"
