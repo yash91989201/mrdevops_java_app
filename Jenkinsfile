@@ -2,13 +2,7 @@
 
 pipeline{
 
-    agent{
-      docker{
-        image 'yash6370/mvn-trivy-agent'
-        args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
-      }
-    } 
-
+    agent any
     parameters{
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose Create/Delete')
         string(name: 'ImageName', description: "Name of the docker image", defaultValue: 'simple_java_app')
@@ -95,15 +89,6 @@ pipeline{
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
-              sh '''
-
-              apt-get update \
-  && apt-get install -y apt-transport-https gnupg lsb-release \
-  && wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null \
-  && echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | tee -a /etc/apt/sources.list.d/trivy.list \
-  && apt-get update \
-  && apt-get install -y trivy
-              '''
                script{
                    
                    dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
