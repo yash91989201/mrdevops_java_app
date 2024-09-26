@@ -19,8 +19,11 @@ pipeline{
     stages{
         
         stage("check versions"){
-          sh 'java --version'
+          steps{
+                      sh 'java --version'
           sh 'mvn -v'
+
+          }
         }
         stage('Git Checkout'){
             when { expression {  params.action == 'create' } }
