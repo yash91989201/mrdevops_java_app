@@ -4,7 +4,7 @@ pipeline{
 
     agent{
       docker{
-        image 'yash6370/mvn-trivy-agent:latest'
+        image 'abhishekf5/maven-abhishek-docker-agent:v1'
         args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
       }
     } 
@@ -17,7 +17,11 @@ pipeline{
     }
 
     stages{
-         
+        
+        stage("check versions"){
+          sh 'java --version'
+          sh 'mvn -v'
+        }
         stage('Git Checkout'){
             when { expression {  params.action == 'create' } }
             steps {
